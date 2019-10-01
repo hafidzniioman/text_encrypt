@@ -160,5 +160,41 @@ class IRF_machine{
 		
 		return implode("", $kata);
 	}
-	
+	/**
+	 * Fungsi Decrypt adalah fungsi untuk mengkonversi Encrpyt Teks ke Pesan Normal
+	 * @param  String $teks merupakan string yang didapat dari inputan user
+	 * @return String       mengembalikan string berupa enkripsi teks yang didapat dari metode Hill Cipher
+	 */
+	public function decrypt($teks=NULL)
+	{
+		$getTeks = $this->masukan($teks);
+		$out     = $this->getarray($getTeks);
+		
+		$kunci   = array();
+		$kunci[] = array("4","3");
+		$kunci[] = array("3","2");
+		$dev = $this->det_matriks($kunci);
+		$inv_mod = $this->invers_mod($dev);
+		$inv_mat = $this->inv_mod_matriks($kunci,$inv_mod);
+		$matriks = $this->mod_kunci($inv_mat);
+		//perkalian matriks
+		$kali = array();
+		foreach ($out as $key) {
+			$kali[] = $this->perkalian_matriks($matriks, $key);
+		}
+		//mod matriks
+		$mod = array();
+		foreach ($kali as $row) {
+			$mod[] = $this->mod_matriks($row);
+		}
+		//bangun teks
+		$arr = str_split($this->abjad);
+		$kata = array();
+		foreach ($mod as $get) {
+			$kata[] = $arr[$get[0]];
+			$kata[] = $arr[$get[1]];
+		}
+		
+		return implode("", $kata);
+	}
 }
